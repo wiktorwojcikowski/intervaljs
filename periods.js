@@ -1,90 +1,162 @@
 //     This lib can be freely distributed under the MIT license.
 
 (function() {
-  var Periods = (function() {
+  var Period = (function() {
     
-    var Periods = function(initialPeriods, options) {
+    var extend = function(dst, src) {
+       for (var i in src) {
+          if (src.hasOwnProperty(i)) {
+             dst[i] = src[i];
+          }
+       }
+       return dst;
+    };
+    
+    var Endpoint = function(value, open) {
+      if(open === 'undefined')
+        open = false;
+      
+      this.value = function() { return value };
+      this.isClosed = function() { return open==false };
+      this.isOpen = function() { return open==true };
+      this.isDatetime = function() { return value instanceof Date };
+      this.isInfinite = function() { return value == 'infinite' };
+      this.__lt__ = function(endpoint) { 
+        if(this.isDatetime())
+          return this.value().getTime() < endpoint.value().getTime() ||
+            ( this.value().getTime() == endpoint.value().getTime() && 
+                                      this.isOpen() && endpoint.isClosed() )
+        else
+          return this.value() < endpoint.value() || 
+            ( this.value() == endpoint.value() && 
+                                      this.isOpen() && endpoint.isClosed() )
+      };
+      this.__gt__ = function(endpoint) { 
+        if(this.isDatetime())
+          return this.value().getTime() > endpoint.value().getTime() ||
+            ( this.value().getTime() == endpoint.value().getTime() && 
+                                      this.isOpen() && endpoint.isClosed() )
+        else
+          return this.value() > endpoint.value() || 
+            ( this.value() == endpoint.value() && 
+                                      this.isClosed() && endpoint.isOpen() )
+      };
+    }
+    
+    Endpoint.prototype.value = function value() {
+      return this.value;
+    }
+    
+    var Period = function(start, end) {
       var $$ = this;
       $$.periods = [];
-      if(initialPeriods) {
-        initialPeriods.forEach(function(p) {
-          $$.union(p);
-        });
+      
+      if(start !== undefined && end !== undefined) {
+        if(!(start instanceof Endpoint))
+          start = $$.createEndpoint(start);
+        if(!(end instanceof Endpoint))
+          end = $$.createEndpoint(end);
+          
+        $$.periods.push({start: start, end: end});
       }
     };
 
-    Periods.prototype.union = function union(period) {
-      var $$ = this, merged = false, i=0;
+    Period.prototype.union = function union(period) {
+      var $$ = this;
       
-      if(!$$.periods.length || $$.periods[$$.periods.length-1][1] < period[0]) {
-        $$.periods.push(period);
-        return $$;
-      }
-
-      for(; i<$$.periods.length && period[0] < $$.periods[i][1]; i++) {
-		    if(period[1] > $$.periods[i][0] && period[0] < $$.periods[i][1] ) {
-		      merged = true;
-		      if( period[0] < $$.periods[i][0])
-  		      $$.periods[i][0] = period[0];
-		      if( period[1] > $$.periods[i][1])
-  		      $$.periods[i][1] = period[1];
-		      break;
-	      }
-      }
-      if(i<$$.periods.length && period[0] < $$.periods[i][1]) {
-        for(i++; i<$$.periods.length && period[0] < $$.periods[i][1];) {
-		      if(period[1] < $$.periods[i][1]) {
-		        $$.periods[i-1][1] = $$.periods[i][1];
-	        }
-	        $$.periods.splice(i, 1);
+      period.periods.forEach(function(period) {
+        var merged = false, i=0;
+        
+        if(!$$.periods.length || $$.periods[$$.periods.length-1].end.__lt__(period.start) ) {
+          $$.periods.push(period);
+          return;
         }
-      }
-      if(!merged) {
-		    $$.periods.splice(Math.max(--i, 0), 0, period);
-      }
+        for(; i<$$.periods.length && period.start.__lt__($$.periods[i].end); i++) {
+		      if(period.end.__gt__($$.periods[i].start) && period.start.__lt__($$.periods[i].end) ) {
+		        merged = true;
+		        if( period.start.__lt__($$.periods[i].start))
+    		      $$.periods[i].start = period.start;
+		        if( period.end.__gt__($$.periods[i].end))
+    		      $$.periods[i].end = period.end;
+		        break;
+	        }
+        }
+        if(i<$$.periods.length && period.start.__lt__($$.periods[i].end)) {
+          for(i++; i<$$.periods.length && period.start.__lt__($$.periods[i].end);) {
+		        if(period.end.__lt__($$.periods[i].end) ) {
+		          $$.periods[i-1].end = $$.periods[i].end;
+	          }
+	          $$.periods.splice(i, 1);
+          }
+        }
+        if(!merged) {
+		      $$.periods.splice(Math.max(--i, 0), 0, period);
+        }
+      });
 		  return $$;
     };
 
-    Periods.prototype.difference = function diference(period) {
-      var $$ = this, merged = false, i=0;
+    Period.prototype.difference = function diference(period) {
+      var $$ = this;
 
-      for(; i<$$.periods.length && period[0] < $$.periods[i][1]; i++) {
-	      if(period[0] < $$.periods[i][0] && period[1] > $$.periods[i][1]) {
-	        $$.periods.slice(i, 1);
-	        i--;
-	      }
-	      else if(period[0] < $$.periods[i][0] && period[1] > $$.periods[i][0]) {
-          $$.periods[i][0] = period[1];
-	      }
-	      else if(period[0] < $$.periods[i][1] && period[1] > $$.periods[i][1]) {
-          $$.periods[i][1] = period[0];
-	      }
-	      else if(period[0] > $$.periods[i][0] && period[1] < $$.periods[i][1]) {
-	        var p = [period[1], $$.periods[i][1]]
-	        $$.periods[i][1] = period[0];
-	        i++;
-	        $$.periods.splice(i, 0, p);
-	      }
+      period.periods.forEach(function(period) {
+        var merged=false, i=0;
+        for(; i<$$.periods.length && period.start.__lt__($$.periods[i].end); i++) {
+	        if(period[0] < $$.periods[i][0] && period.end.__lt__($$.periods[i].end)) {
+	          $$.periods.slice(i, 1);
+	          i--;
+	        }
+	        else if(period.start.__lt__($$.periods[i].start) && period.end.__gt__($$.periods[i].start)) {
+            $$.periods[i].start = $$.createEndpoint(period.end.value(), !period.end.isOpen());
+	        }
+	        else if(period.start.__lt__($$.periods[i].end) && period.end.__gt__($$.periods[i].end)) {
+            $$.periods[i].end = $$.createEndpoint(period.start.value(), !period.start.isOpen());;
+	        }
+	        else if(period.start.__gt__($$.periods[i].start) && period.end.__lt__($$.periods[i].end)) {
+	          var p = {
+	            start: $$.createEndpoint(period.end.value(), !period.end.isOpen()), 
+	            end: $$.periods[i].end
+            };
+	          $$.periods[i].end = $$.createEndpoint(period.start.value(), !period.start.isOpen());;
+	          i++;
+	          $$.periods.splice(i, 0, p);
+	        }
 
-		  };
+		    };
+	    });
 		  return $$;
     }
 
-    Periods.prototype.intersection = function intersection(periods, period) {
+    Period.prototype.intersection = function intersection(periods, period) {
       
     };
 
-    Periods.prototype.exclusion = function intersection(periods, period) {
+    Period.prototype.exclusion = function intersection(periods, period) {
       
     };
 
+    Period.prototype.createEndpoint = function(value, open) {
+      return new Endpoint(value, open);
+    }
+    Period.prototype.createInfiniteEndpoint = function() {
+      return new Endpoint('infinite');
+    }
+    
+    Period.prototype.toString = function() {
+      var parts = [];
+      this.periods.forEach(function(p) {
+        parts.push(
+          (p.start.isOpen()?"(":"[")+p.start.value()+";"+p.end.value()+(p.end.isOpen()?")":"]")
+        );
+      });
+      return parts.join(", ");
+    }
 
-
-    return Periods;
+    return Period;
   })();
 
   if (typeof module !== 'undefined' && typeof module.exports !== 'undefined')
-    module.exports = Periods;
+    module.exports = Period;
   else
-    window.Periods = Periods;
+    window.Period = Period;
 })();
