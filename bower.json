@@ -1,0 +1,28 @@
+{
+  "name": "periodsjs",
+  "homepage": "https://github.com/wiktorwojcikowski/periodsjs",
+  "authors": [
+    "Wiktor <wiktor.wojcikowski@gmail.com>"
+  ],
+  "description": "Library to operate on linnear periods",
+  "main": "periods.js",
+  "moduleType": [
+    "amd",
+    "es6",
+    "globals",
+    "node",
+    "yui"
+  ],
+  "keywords": [
+    "periods",
+    "time-periods"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

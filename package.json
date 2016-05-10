@@ -1,0 +1,35 @@
+{
+  "name": "periodsjs",
+  "version": "1.0.0",
+  "description": "Library to operate on linnear periods",
+  "main": "periods.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "karma test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wiktorwojcikowski/periodsjs.git"
+  },
+  "keywords": [
+    "periods",
+    "time-periods"
+  ],
+  "author": "Popily <awsome@popily.com> (https://popily.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wiktorwojcikowski/periodsjs/issues"
+  },
+  "homepage": "https://github.com/wiktorwojcikowski/periodsjs#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "karma": "^0.13.22",
+    "karma-chai": "^0.1.0",
+    "karma-mocha": "^1.0.1",
+    "karma-phantomjs-launcher": "^1.0.0",
+    "mocha": "^2.4.5",
+    "phantomjs-prebuilt": "^2.1.7"
+  }
+}
