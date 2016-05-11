@@ -152,5 +152,33 @@ describe("Interval", function() {
     });
   });
 
+  describe("contain single point", function() {
+    var result = new Interval(2,3)
+      .contain(3);
+      
+    it("interval should contain value", function() {
+      expect(result).to.be.equal(true);
+    });
+  });
+
+  describe("contain interval", function() {
+    var result = new Interval(2,6)
+      .contain(4,6);
+      
+    it("interval should contain interval", function() {
+      expect(result).to.be.equal(true);
+    });
+  });
+
+  describe("contain interval", function() {
+    var result = new Interval(2,8)
+      .difference(6)
+      .contain(4,7);
+      
+    it("interval should not contain interval", function() {
+      expect(result).to.be.equal(false);
+    });
+  });
+
 
 });

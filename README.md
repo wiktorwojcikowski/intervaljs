@@ -46,5 +46,16 @@ new Interval(1, 8)
 // [1;3), (3;8]
 ```
 
+Contain check:
+```js
+new Interval(1, 8)
+  .contain(5, 8)
+// true
+new Interval(1, 8)
+  .diference(5, 9)
+  .contain(2, 5);
+// false
+```
+
 
 

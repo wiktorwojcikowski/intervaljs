@@ -91,7 +91,7 @@
     }
     
 
-    Interval.prototype.union = function union() {
+    Interval.prototype.union = function union(interval) {
       var $$ = this, Interval;
       interval = $$.parseArgs.apply($$, arguments);
       
@@ -127,7 +127,7 @@
       return $$;
     };
 
-    Interval.prototype.difference = function diference() {
+    Interval.prototype.difference = function diference(interval) {
       var $$ = this, interval;
       interval = $$.parseArgs.apply($$, arguments);
       
@@ -166,15 +166,15 @@
       
     };
 
-    Interval.prototype.contain = function contain() {
-      var $$ = this, result=true, interval;
+    Interval.prototype.contain = function contain(interval) {
+      var $$ = this, result=true;
       interval = $$.parseArgs.apply($$, arguments);
       
       interval.intervals.forEach(function(interval) {
         var found=false, i=0;
         if(!result)
           return;
-        for(; i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end); i++) {
+        for(; i<$$.intervals.length && interval.end.__lte__($$.intervals[i].end); i++) {
           if(interval.start.__gte__($$.intervals[i].start) 
                           && interval.end.__lte__($$.intervals[i].end)) {
             found = true;
