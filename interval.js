@@ -13,7 +13,7 @@
     };
     
     var Endpoint = function(value, open) {
-      if(open === 'undefined')
+      if(typeof open == 'undefined')
         open = false;
       
       this.value = function() { return value };
@@ -98,22 +98,30 @@
       interval.intervals.forEach(function(interval) {
         var merged = false, i=0;
         
-        if(!$$.intervals.length || $$.intervals[$$.intervals.length-1].end.__lte__(interval.start) ) {
+        if(!$$.intervals.length || 
+            $$.intervals[$$.intervals.length-1].end.__lt__(interval.start) ) {
           $$.intervals.push(interval);
           return;
         }
-        for(; i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end); i++) {
-          if(interval.end.__gt__($$.intervals[i].start) && interval.start.__lte__($$.intervals[i].end) ) {
+        for(; i<$$.intervals.length && 
+                (interval.end.__gte__($$.intervals[i].start) || 
+                interval.start.__lte__($$.intervals[i].end)); i++) {
+          if(interval.end.__gte__($$.intervals[i].start) && 
+                        interval.start.__lte__($$.intervals[i].end) ) {
             merged = true;
-            if( interval.start.__lt__($$.intervals[i].start))
+            if( interval.start.__lte__($$.intervals[i].start))
               $$.intervals[i].start = interval.start;
-            if( interval.end.__gt__($$.intervals[i].end))
+            if( interval.end.__gte__($$.intervals[i].end))
               $$.intervals[i].end = interval.end;
             break;
           }
         }
-        if(i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end)) {
-          for(i++; i<$$.intervals.length && interval.start.__lte__($$.intervals[i].end);) {
+        if(i<$$.intervals.length && 
+              (interval.end.__gte__($$.intervals[i].start) && 
+              interval.start.__lte__($$.intervals[i].end))) {
+          for(i++; i<$$.intervals.length && 
+                    (interval.end.__gte__($$.intervals[i].start) && 
+                    interval.start.__lte__($$.intervals[i].end));) {
             if(interval.end.__lt__($$.intervals[i].end) ) {
               $$.intervals[i-1].end = $$.intervals[i].end;
             }
@@ -133,23 +141,31 @@
       
       interval.intervals.forEach(function(interval) {
         var merged=false, i=0;
-        for(; i<$$.intervals.length && interval.start.__lte__($$.intervals[i].end); i++) {
-          if(interval.start.__lte__($$.intervals[i].start) && interval.end.__gte__($$.intervals[i].end)) {
+        for(; i<$$.intervals.length && (interval.end.__gte__($$.intervals[i].start) || 
+                interval.start.__lte__($$.intervals[i].end)); i++) {
+          if(interval.start.__lte__($$.intervals[i].start) && 
+                              interval.end.__gte__($$.intervals[i].end)) {
             $$.intervals.slice(i, 1);
             i--;
           }
-          else if(interval.start.__lte__($$.intervals[i].start) && interval.end.__gte__($$.intervals[i].start)) {
-            $$.intervals[i].start = $$.createEndpoint(interval.end.value(), !interval.end.isOpen());
+          else if(interval.start.__lte__($$.intervals[i].start) && 
+                              interval.end.__gte__($$.intervals[i].start)) {
+            $$.intervals[i].start = 
+                $$.createEndpoint(interval.end.value(), !interval.end.isOpen());
           }
-          else if(interval.start.__lte__($$.intervals[i].end) && interval.end.__gte__($$.intervals[i].end)) {
-            $$.intervals[i].end = $$.createEndpoint(interval.start.value(), !interval.start.isOpen());
+          else if(interval.start.__lte__($$.intervals[i].end) && 
+                              interval.end.__gte__($$.intervals[i].end)) {
+            $$.intervals[i].end = 
+                $$.createEndpoint(interval.start.value(), !interval.start.isOpen());
           }
-          else if(interval.start.__gt__($$.intervals[i].start) && interval.end.__lt__($$.intervals[i].end)) {
+          else if(interval.start.__gt__($$.intervals[i].start) && 
+                              interval.end.__lt__($$.intervals[i].end)) {
             var p = {
               start: $$.createEndpoint(interval.end.value(), !interval.end.isOpen()), 
               end: $$.intervals[i].end
             };
-            $$.intervals[i].end = $$.createEndpoint(interval.start.value(), !interval.start.isOpen());;
+            $$.intervals[i].end = 
+                $$.createEndpoint(interval.start.value(), !interval.start.isOpen());;
             i++;
             $$.intervals.splice(i, 0, p);
           }
@@ -174,16 +190,17 @@
         var found=false, i=0;
         if(!result)
           return;
-        for(; i<$$.intervals.length && interval.end.__lte__($$.intervals[i].end); i++) {
+        for(; i<$$.intervals.length && (interval.end.__gte__($$.intervals[i].start) || 
+                interval.start.__lte__($$.intervals[i].end)); i++) {
           if(interval.start.__gte__($$.intervals[i].start) 
                           && interval.end.__lte__($$.intervals[i].end)) {
             found = true;
             break;
           }
         }
+        
         result = result && found;
       });
-      
       return result;
     }
     
@@ -196,7 +213,9 @@
           parts.push("{"+i.start.value()+"}");
         else
           parts.push(
-            (i.start.isOpen()?"(":"[")+i.start.value()+";"+i.end.value()+(i.end.isOpen()?")":"]")
+            (i.start.isOpen()?"(":"[") +
+            i.start.value()+";"+i.end.value() +
+            (i.end.isOpen()?")":"]")
           );
       });
       return parts.join(", ");

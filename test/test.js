@@ -81,11 +81,44 @@ describe("Interval", function() {
       .union(6,8)
       .union(new Interval(3,7));
 
-    it("Should has one intervals", function() {
+    it("Should has one interval", function() {
       expect(interval.toString()).to.be.equal('[2;8]');
     });
   });
 
+  describe("union between", function() {
+    var interval = new Interval(2,3)
+      .union(7,9)
+      .union(4,5);
+
+    it("Should has three intervals", function() {
+      expect(interval.toString()).to.be.equal('[2;3], [4;5], [7;9]');
+    });
+  });
+  
+  describe("union between with join after", function() {
+    var interval = new Interval(0, 2)
+      .union(3, 4)
+      .union(6, 8)
+      .union(4, 8);
+
+    it("Should has two intervals", function() {
+      expect(interval.toString()).to.be.equal('[0;2], [3;8]');
+    });
+  });
+
+  describe("union between with join before", function() {
+    var interval = new Interval(0, 2)
+      .union(3, 4)
+      .union(6, 8)
+      .union(2, 4);
+
+    it("Should has two intervals", function() {
+      expect(interval.toString()).to.be.equal('[0;4], [6;8]');
+    });
+  });
+
+  
 
   describe("difference from right", function() {
     var interval = new Interval(4,7)
@@ -160,7 +193,7 @@ describe("Interval", function() {
       expect(result).to.be.equal(true);
     });
   });
-
+  
   describe("contain interval", function() {
     var result = new Interval(2,6)
       .contain(4,6);
@@ -179,6 +212,20 @@ describe("Interval", function() {
       expect(result).to.be.equal(false);
     });
   });
+
+  describe("contain dual", function() {
+  
+    var i1 = new Interval(1, 4)
+      .union(6, 9);
+    var i2 = new Interval(1, 9)
+      .difference(4, 6);
+    var result = i1.contain(i2);
+      
+    it("interval should contain intervals", function() {
+      expect(result).to.be.equal(true);
+    });
+  });
+
 
 
 });

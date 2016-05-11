@@ -55,6 +55,13 @@ new Interval(1, 8)
   .diference(5, 9)
   .contain(2, 5);
 // false
+
+var i1 = new Interval(1, 4)
+  .union(6, 9)
+var i2 = new Interval(1, 9)
+  .diference(4, 6)
+i1.contain(i2)
+// true
 ```
 
 
