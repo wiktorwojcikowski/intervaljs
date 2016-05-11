@@ -1,28 +1,28 @@
 {
-  "name": "periodsjs",
+  "name": "intervaljs",
   "version": "1.0.0",
-  "description": "Library to operate on linnear periods",
-  "main": "periods.js",
+  "description": "Library to operate on real intervals",
+  "main": "interval.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "karma test"
+    "test": "karma start"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wiktorwojcikowski/periodsjs.git"
+    "url": "git+https://github.com/wiktorwojcikowski/intervaljs.git"
   },
   "keywords": [
-    "periods",
-    "time-periods"
+    "interval",
+    "time interval"
   ],
-  "author": "Popily <awsome@popily.com> (https://popily.com)",
+  "author": "Wiktor <wiktor.wojcikowski@gmail.com> (http://wojcikowski.it)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wiktorwojcikowski/periodsjs/issues"
+    "url": "https://github.com/wiktorwojcikowski/intervaljs/issues"
   },
-  "homepage": "https://github.com/wiktorwojcikowski/periodsjs#readme",
+  "homepage": "https://github.com/wiktorwojcikowski/intervaljs#readme",
   "devDependencies": {
     "chai": "^3.5.0",
     "karma": "^0.13.22",

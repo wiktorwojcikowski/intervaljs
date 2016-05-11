@@ -1,3 +1,3 @@
-# periodsjs
+# intervaljs
 
-Library to control linar periods
+Library to control linar intervals

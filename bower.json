@@ -1,11 +1,11 @@
 {
-  "name": "periodsjs",
-  "homepage": "https://github.com/wiktorwojcikowski/periodsjs",
+  "name": "intervaljs",
+  "homepage": "https://github.com/wiktorwojcikowski/intervaljs",
   "authors": [
     "Wiktor <wiktor.wojcikowski@gmail.com>"
   ],
-  "description": "Library to operate on linnear periods",
-  "main": "periods.js",
+  "description": "Library to operate on linnear intervals",
+  "main": "interval.js",
   "moduleType": [
     "amd",
     "es6",
@@ -14,8 +14,8 @@
     "yui"
   ],
   "keywords": [
-    "periods",
-    "time-periods"
+    "interval",
+    "time interval"
   ],
   "license": "MIT",
   "ignore": [
