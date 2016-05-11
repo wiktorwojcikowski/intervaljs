@@ -17,31 +17,41 @@
         open = false;
       
       this.value = function() { return value };
+      this.compareValue = function() { 
+        if(this.isDatetime())
+          return value.getTime();
+        else
+          return value;
+      };
       this.isClosed = function() { return open==false };
       this.isOpen = function() { return open==true };
       this.isDatetime = function() { return value instanceof Date };
       this.isInfinite = function() { return Math.abs(value) == Infinity };
-      this.__lt__ = function(endpoint) { 
-        if(this.isDatetime())
-          return this.value().getTime() < endpoint.value().getTime() ||
-            ( this.value().getTime() == endpoint.value().getTime() && 
-                                      this.isOpen() && endpoint.isClosed() )
-        else
-          return this.value() < endpoint.value() || 
-            ( this.value() == endpoint.value() && 
-                                      this.isOpen() && endpoint.isClosed() )
-      };
-      this.__gt__ = function(endpoint) { 
-        if(this.isDatetime())
-          return this.value().getTime() > endpoint.value().getTime() ||
-            ( this.value().getTime() == endpoint.value().getTime() && 
-                                      this.isOpen() && endpoint.isClosed() )
-        else
-          return this.value() > endpoint.value() || 
-            ( this.value() == endpoint.value() && 
-                                      this.isClosed() && endpoint.isOpen() )
-      };
     }
+    Endpoint.prototype.__eq__ = function(endpoint) { 
+      return this.compareValue() == endpoint.compareValue() && 
+                                    this.isOpen() == endpoint.isOpen();
+    };
+    Endpoint.prototype.__lt__ = function(endpoint) { 
+      return this.compareValue() < endpoint.compareValue() ||
+          ( this.compareValue() == endpoint.compareValue() && 
+                                    this.isOpen() && endpoint.isClosed() );
+    };
+    Endpoint.prototype.__lte__ = function(endpoint) {
+      return this.__lt__(endpoint) ||
+        ( this.compareValue() == endpoint.compareValue() && 
+                                this.isOpen() == endpoint.isOpen() );
+    };
+    Endpoint.prototype.__gt__ = function(endpoint) { 
+      return this.compareValue() > endpoint.compareValue() ||
+          ( this.compareValue() == endpoint.compareValue() && 
+                                    this.isOpen() && endpoint.isClosed() );
+    };
+    Endpoint.prototype.__gte__ = function(endpoint) { 
+      return this.__gt__(endpoint) ||
+          ( this.compareValue() == endpoint.compareValue() && 
+                                  this.isOpen() == endpoint.isOpen() );
+    };
     
     Endpoint.prototype.value = function value() {
       return this.value;
@@ -76,74 +86,76 @@
         return new Interval(arguments[0], arguments[0]);
     };
 
+    Interval.prototype.createEndpoint = function(value, open) {
+      return new Endpoint(value, open);
+    }
+    
+
     Interval.prototype.union = function union() {
       var $$ = this, Interval;
+      interval = $$.parseArgs.apply($$, arguments);
       
-      Interval = $$.parseArgs.apply($$, arguments);
-      
-      Interval.intervals.forEach(function(interval) {
+      interval.intervals.forEach(function(interval) {
         var merged = false, i=0;
         
-        if(!$$.intervals.length || $$.intervals[$$.intervals.length-1].end.__lt__(interval.start) ) {
+        if(!$$.intervals.length || $$.intervals[$$.intervals.length-1].end.__lte__(interval.start) ) {
           $$.intervals.push(interval);
           return;
         }
         for(; i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end); i++) {
-		      if(interval.end.__gt__($$.intervals[i].start) && interval.start.__lt__($$.intervals[i].end) ) {
-		        merged = true;
-		        if( interval.start.__lt__($$.intervals[i].start))
-    		      $$.intervals[i].start = interval.start;
-		        if( interval.end.__gt__($$.intervals[i].end))
-    		      $$.intervals[i].end = interval.end;
-		        break;
-	        }
+          if(interval.end.__gt__($$.intervals[i].start) && interval.start.__lte__($$.intervals[i].end) ) {
+            merged = true;
+            if( interval.start.__lt__($$.intervals[i].start))
+              $$.intervals[i].start = interval.start;
+            if( interval.end.__gt__($$.intervals[i].end))
+              $$.intervals[i].end = interval.end;
+            break;
+          }
         }
         if(i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end)) {
-          for(i++; i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end);) {
-		        if(interval.end.__lt__($$.intervals[i].end) ) {
-		          $$.intervals[i-1].end = $$.intervals[i].end;
-	          }
-	          $$.intervals.splice(i, 1);
+          for(i++; i<$$.intervals.length && interval.start.__lte__($$.intervals[i].end);) {
+            if(interval.end.__lt__($$.intervals[i].end) ) {
+              $$.intervals[i-1].end = $$.intervals[i].end;
+            }
+            $$.intervals.splice(i, 1);
           }
         }
         if(!merged) {
-		      $$.intervals.splice(Math.max(--i, 0), 0, interval);
+          $$.intervals.splice(Math.max(--i, 0), 0, interval);
         }
       });
-		  return $$;
+      return $$;
     };
 
     Interval.prototype.difference = function diference() {
       var $$ = this, interval;
-      
       interval = $$.parseArgs.apply($$, arguments);
-
+      
       interval.intervals.forEach(function(interval) {
         var merged=false, i=0;
-        for(; i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end); i++) {
-	        if(interval[0] < $$.intervals[i][0] && interval.end.__lt__($$.intervals[i].end)) {
-	          $$.intervals.slice(i, 1);
-	          i--;
-	        }
-	        else if(interval.start.__lt__($$.intervals[i].start) && interval.end.__gt__($$.intervals[i].start)) {
+        for(; i<$$.intervals.length && interval.start.__lte__($$.intervals[i].end); i++) {
+          if(interval.start.__lte__($$.intervals[i].start) && interval.end.__gte__($$.intervals[i].end)) {
+            $$.intervals.slice(i, 1);
+            i--;
+          }
+          else if(interval.start.__lte__($$.intervals[i].start) && interval.end.__gte__($$.intervals[i].start)) {
             $$.intervals[i].start = $$.createEndpoint(interval.end.value(), !interval.end.isOpen());
-	        }
-	        else if(interval.start.__lt__($$.intervals[i].end) && interval.end.__gt__($$.intervals[i].end)) {
-            $$.intervals[i].end = $$.createEndpoint(interval.start.value(), !interval.start.isOpen());;
-	        }
-	        else if(interval.start.__gt__($$.intervals[i].start) && interval.end.__lt__($$.intervals[i].end)) {
-	          var p = {
-	            start: $$.createEndpoint(interval.end.value(), !interval.end.isOpen()), 
-	            end: $$.intervals[i].end
+          }
+          else if(interval.start.__lte__($$.intervals[i].end) && interval.end.__gte__($$.intervals[i].end)) {
+            $$.intervals[i].end = $$.createEndpoint(interval.start.value(), !interval.start.isOpen());
+          }
+          else if(interval.start.__gt__($$.intervals[i].start) && interval.end.__lt__($$.intervals[i].end)) {
+            var p = {
+              start: $$.createEndpoint(interval.end.value(), !interval.end.isOpen()), 
+              end: $$.intervals[i].end
             };
-	          $$.intervals[i].end = $$.createEndpoint(interval.start.value(), !interval.start.isOpen());;
-	          i++;
-	          $$.intervals.splice(i, 0, p);
-	        }
-
-		    };
-	    });
-		  return $$;
+            $$.intervals[i].end = $$.createEndpoint(interval.start.value(), !interval.start.isOpen());;
+            i++;
+            $$.intervals.splice(i, 0, p);
+          }
+        };
+      });
+      return $$;
     }
 
     Interval.prototype.intersection = function intersection() {
@@ -154,16 +166,38 @@
       
     };
 
-    Interval.prototype.createEndpoint = function(value, open) {
-      return new Endpoint(value, open);
+    Interval.prototype.contain = function contain() {
+      var $$ = this, result=true, interval;
+      interval = $$.parseArgs.apply($$, arguments);
+      
+      interval.intervals.forEach(function(interval) {
+        var found=false, i=0;
+        if(!result)
+          return;
+        for(; i<$$.intervals.length && interval.start.__lt__($$.intervals[i].end); i++) {
+          if(interval.start.__gte__($$.intervals[i].start) 
+                          && interval.end.__lte__($$.intervals[i].end)) {
+            found = true;
+            break;
+          }
+        }
+        result = result && found;
+      });
+      
+      return result;
     }
     
+
+
     Interval.prototype.toString = function() {
       var parts = [];
-      this.intervals.forEach(function(p) {
-        parts.push(
-          (p.start.isOpen()?"(":"[")+p.start.value()+";"+p.end.value()+(p.end.isOpen()?")":"]")
-        );
+      this.intervals.forEach(function(i) {
+        if( i.start.__eq__(i.end) )
+          parts.push("{"+i.start.value()+"}");
+        else
+          parts.push(
+            (i.start.isOpen()?"(":"[")+i.start.value()+";"+i.end.value()+(i.end.isOpen()?")":"]")
+          );
       });
       return parts.join(", ");
     }

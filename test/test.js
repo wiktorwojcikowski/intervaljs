@@ -20,6 +20,14 @@ describe("Interval", function() {
     });
   })
   
+  describe("init single poinnt", function() {
+    var interval = new Interval(2,2);
+    
+    it("Should has one point", function() {
+      expect(interval.toString()).to.be.equal('{2}');
+    });
+  })
+  
     
   describe("union with empty", function() {
     var interval = new Interval()
@@ -123,6 +131,24 @@ describe("Interval", function() {
       
     it("Should has two intervals", function() {
       expect(interval.toString()).to.be.equal('[2;3), (3;9]');
+    });
+  });
+
+  describe("difference single point, right border case", function() {
+    var interval = new Interval(2,3)
+      .difference(3);
+      
+    it("Should has two intervals", function() {
+      expect(interval.toString()).to.be.equal('[2;3)');
+    });
+  });
+
+  describe("difference single point, left border case", function() {
+    var interval = new Interval(2,3)
+      .difference(2);
+      
+    it("Should has two intervals", function() {
+      expect(interval.toString()).to.be.equal('(2;3]');
     });
   });
 
