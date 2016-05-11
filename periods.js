@@ -20,7 +20,7 @@
       this.isClosed = function() { return open==false };
       this.isOpen = function() { return open==true };
       this.isDatetime = function() { return value instanceof Date };
-      this.isInfinite = function() { return value == 'infinite' };
+      this.isInfinite = function() { return Math.abs(value) == Infinity };
       this.__lt__ = function(endpoint) { 
         if(this.isDatetime())
           return this.value().getTime() < endpoint.value().getTime() ||
@@ -47,11 +47,15 @@
       return this.value;
     }
     
+    
+    
     var Period = function(start, end) {
       var $$ = this;
       $$.periods = [];
       
-      if(start !== undefined && end !== undefined) {
+      if(arguments.length) {
+        if(arguments.length==1)
+          end = start;
         if(!(start instanceof Endpoint))
           start = $$.createEndpoint(start);
         if(!(end instanceof Endpoint))
@@ -61,8 +65,21 @@
       }
     };
 
-    Period.prototype.union = function union(period) {
-      var $$ = this;
+    Period.prototype.parseArgs = function parseArgs() {
+      if(!arguments.length)
+        return new Period();
+      if(arguments[0] instanceof Period)
+        return arguments[0];
+      if(arguments.length > 1)
+        return new Period(arguments[0], arguments[1]);
+      else
+        return new Period(arguments[0], arguments[0]);
+    };
+
+    Period.prototype.union = function union() {
+      var $$ = this, period;
+      
+      period = $$.parseArgs.apply($$, arguments);
       
       period.periods.forEach(function(period) {
         var merged = false, i=0;
@@ -96,8 +113,10 @@
 		  return $$;
     };
 
-    Period.prototype.difference = function diference(period) {
-      var $$ = this;
+    Period.prototype.difference = function diference() {
+      var $$ = this, period;
+      
+      period = $$.parseArgs.apply($$, arguments);
 
       period.periods.forEach(function(period) {
         var merged=false, i=0;
@@ -137,9 +156,6 @@
 
     Period.prototype.createEndpoint = function(value, open) {
       return new Endpoint(value, open);
-    }
-    Period.prototype.createInfiniteEndpoint = function() {
-      return new Endpoint('infinite');
     }
     
     Period.prototype.toString = function() {
