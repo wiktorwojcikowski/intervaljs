@@ -182,6 +182,10 @@
       
     };
 
+    Interval.prototype.inversion = function inversion() {
+      
+    };
+
     Interval.prototype.contain = function contain(interval) {
       var $$ = this, result=true;
       interval = $$.parseArgs.apply($$, arguments);

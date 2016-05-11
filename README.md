@@ -1,10 +1,19 @@
 # intervaljs
 
-Library to control linar intervals
+Library implementing mathematical datetime and real intervals arithmetics.
+Available operations:
+
+- union
+- difference
+- intersection (TODO)
+- exclusion (TODO)
+- inversion (TODO)
+- contain
 
 # Installation
 
 `npm install intervaljs`
+or
 `bower install intervaljs`
 
 # Usage
