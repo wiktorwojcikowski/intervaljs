@@ -228,4 +228,58 @@ describe("Interval", function() {
 
 
 
+  describe("infinity intervals", function() {
+  
+    var interval = new Interval(4, Infinity)
+      .union(3, 5)
+      .difference(7, 8);
+      
+    it("interval should contain intervals", function() {
+      expect(interval.toString()).to.be.equal('[3;7), (8;Infinity)');
+    });
+  });
+
+  describe("inversion of interval", function() {
+  
+    var interval = new Interval(4, 6)
+      .inversion();
+      
+    it("should have two intervals", function() {
+      expect(interval.toString()).to.be.equal('(-Infinity;4), (6;Infinity)');
+    });
+  });
+
+  describe("inversion of infinity interval", function() {
+  
+    var interval = new Interval(4, Infinity)
+      .inversion();
+      
+    it("should has one inetrval", function() {
+      expect(interval.toString()).to.be.equal('(-Infinity;4)');
+    });
+  });
+
+
+  describe("intersection", function() {
+  
+    var interval = new Interval(2, 6)
+      .intersection(4, 8);
+      
+    it("should has one inetrval", function() {
+      expect(interval.toString()).to.be.equal('[4;6]');
+    });
+  });
+
+  describe("exclusion", function() {
+  
+    var interval = new Interval(2, 6)
+      .exclusion(4, 8);
+      
+    it("should has one inetrval", function() {
+      expect(interval.toString()).to.be.equal('[2;4), (6;8]');
+    });
+  });
+
+
+
 });

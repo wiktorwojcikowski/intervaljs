@@ -23,8 +23,8 @@
         else
           return value;
       };
-      this.isClosed = function() { return open==false };
-      this.isOpen = function() { return open==true };
+      this.isClosed = function() { return !this.isInfinite() && open==false };
+      this.isOpen = function() { return this.isInfinite() || open==true };
       this.isDatetime = function() { return value instanceof Date };
       this.isInfinite = function() { return Math.abs(value) == Infinity };
     }
@@ -100,7 +100,7 @@
         
         if(!$$.intervals.length || 
             $$.intervals[$$.intervals.length-1].end.__lt__(interval.start) ) {
-          $$.intervals.push(interval);
+          $$.intervals.push({start: interval.start, end: interval.end});
           return;
         }
         for(; i<$$.intervals.length && 
@@ -129,7 +129,7 @@
           }
         }
         if(!merged) {
-          $$.intervals.splice(Math.max(--i, 0), 0, interval);
+          $$.intervals.splice(Math.max(--i, 0), 0, {start: interval.start, end: interval.end});
         }
       });
       return $$;
@@ -174,16 +174,27 @@
       return $$;
     }
 
-    Interval.prototype.intersection = function intersection() {
-      
+    Interval.prototype.intersection = function intersection(interval) {
+      var $$ = this, interval;
+      interval = $$.parseArgs.apply($$, arguments);
+
+      return new Interval()
+        .union($$)
+        .union(interval)
+        .difference($$.inversion())
+        .difference(interval.inversion());
     };
 
-    Interval.prototype.exclusion = function intersection() {
+    Interval.prototype.exclusion = function intersection(interval) {
+      var $$ = this, interval;
+      interval = $$.parseArgs.apply($$, arguments);
       
+      return new Interval().union($$).difference(interval)
+        .union(new Interval().union(interval).difference($$))
     };
 
     Interval.prototype.inversion = function inversion() {
-      
+      return new Interval(-Infinity, Infinity).difference(this);
     };
 
     Interval.prototype.contain = function contain(interval) {
