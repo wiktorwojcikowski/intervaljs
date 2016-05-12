@@ -41,7 +41,7 @@ new Interval(1, 3)
 // [1;3], [5;Infinity]
 ```
 
-#### `.difference(interval)` or `.difference(start, [end])`
+##### `.difference(interval)` or `.difference(start, [end])`
 Substract interval from interval.
 
 ```js
@@ -52,7 +52,7 @@ new Interval(1, 8)
 // [1;3), (3,5)
 ```
 
-#### `.intersection(interval)` or `.intersection(start, [end])`
+##### `.intersection(interval)` or `.intersection(start, [end])`
 Common part of intervals.
 
 ```js
@@ -61,7 +61,7 @@ var interval = new Interval(2, 6)
 // [4;6]
 ```
 
-#### `.exclusion(interval)` or `.exclusion(start, [end])`
+##### `.exclusion(interval)` or `.exclusion(start, [end])`
 Exclusive OR or intervals.
 
 ```js
@@ -70,7 +70,7 @@ var interval = new Interval(2, 6)
 // [2;4), (6;8]
 ```
 
-#### `.inversion()`
+##### `.inversion()`
 Invert interval.
 
 ```js
@@ -79,7 +79,7 @@ new Interval(1, 8)
 // (-Infinity;1), (8,Infinity)
 ```
 
-#### `.contain(interval)` or `.contain(start, [end])`
+##### `.contain(interval)` or `.contain(start, [end])`
 Check if interval contain other interval.
 
 ```js
