@@ -22,7 +22,7 @@ Install with bower:
 ```bower install intervaljs```
 
 
-# Usage
+# Initializations
 
 ##### `new Interval(start, [end=start])`
 Create Interval object.
@@ -41,6 +41,7 @@ var eEnd = new Interval.Endpoint(3, true); // 'endpoint open'
 new Interval(eStart, eEnd).toString() // [2, 3) - left closed, right open
 ```
 
+# API
 
 ##### `.union(intervalObj)` or `.union(start, [end=start])`
 `A∪B` - Add intervals to interval.
@@ -135,6 +136,41 @@ new Interval(1, 8)
 
 ```
 
+
+# Utils
+
+##### `.intervals()`
+Return intervals array
+
+```js
+var arr = new Interval(1, 6)
+  .union(8)
+  .intervals()
+  
+arr.length;
+// 2
+```
+
+##### `.forEach(callback)`
+Iterate throught intervals
+
+```js
+new Interval(1, 6)
+  .union(8)
+  .forEach(function(start, end) {
+    // start.value()
+  })
+```
+
+##### `.count()`
+Return count of intervals
+
+```js
+new Interval(1, 6)
+  .union(8)
+  .count()
+// 2
+```
 
 ##### `.toString()`
 Output intervals string
