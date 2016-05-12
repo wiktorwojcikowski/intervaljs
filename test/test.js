@@ -211,48 +211,65 @@ describe("Interval", function() {
     });
   });
 
-  describe("contain single point", function() {
+  describe("superset single point", function() {
     var result = new Interval(2,3)
-      .contain(3);
+      .superset(3);
       
     it("interval should contain value", function() {
       expect(result).to.be.equal(true);
     });
   });
   
-  describe("contain interval", function() {
+  describe("superset interval", function() {
     var result = new Interval(2,6)
-      .contain(4,6);
+      .superset(4,6);
       
     it("interval should contain interval", function() {
       expect(result).to.be.equal(true);
     });
   });
 
-  describe("contain interval", function() {
+  describe("superset interval", function() {
     var result = new Interval(2,8)
       .difference(6)
-      .contain(4,7);
+      .superset(4,7);
       
     it("interval should not contain interval", function() {
       expect(result).to.be.equal(false);
     });
   });
 
-  describe("contain dual", function() {
+  describe("superset dual", function() {
   
     var i1 = new Interval(1, 4)
       .union(6, 9);
     var i2 = new Interval(1, 9)
       .difference(4, 6);
-    var result = i1.contain(i2);
+    var result = i1.superset(i2);
       
     it("interval should contain intervals", function() {
       expect(result).to.be.equal(true);
     });
   });
-
-
+  
+  describe("subset interval", function() {
+    var result = new Interval(2,3)
+      .subset(1, 9);
+      
+    it("interval should contain value", function() {
+      expect(result).to.be.equal(true);
+    });
+  });
+  
+  describe("conatins single point", function() {
+    var result = new Interval(2,3)
+      .contains(3);
+      
+    it("interval should contain value", function() {
+      expect(result).to.be.equal(true);
+    });
+  });
+  
 
   describe("infinity intervals", function() {
   

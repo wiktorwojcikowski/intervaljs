@@ -76,7 +76,9 @@
       }
     };
     
+    
     Interval.Endpoint = Endpoint;
+
 
     Interval.prototype.parseArgs = function parseArgs() {
       if(!arguments.length)
@@ -134,6 +136,7 @@
       return $$;
     };
 
+
     Interval.prototype.difference = function diference(interval) {
       var $$ = this, interval;
       interval = $$.parseArgs.apply($$, arguments);
@@ -173,6 +176,7 @@
       return $$;
     }
 
+
     Interval.prototype.intersection = function intersection(interval) {
       var $$ = this, interval;
       interval = $$.parseArgs.apply($$, arguments);
@@ -184,6 +188,7 @@
         .difference(interval.inversion());
     };
 
+
     Interval.prototype.exclusion = function intersection(interval) {
       var $$ = this, interval;
       interval = $$.parseArgs.apply($$, arguments);
@@ -192,11 +197,13 @@
         .union(new Interval().union(interval).difference($$))
     };
 
+
     Interval.prototype.inversion = function inversion() {
       return new Interval(-Infinity, Infinity).difference(this);
     };
 
-    Interval.prototype.contain = function contain(interval) {
+
+    Interval.prototype.superset = function superset(interval) {
       var $$ = this, result=true;
       interval = $$.parseArgs.apply($$, arguments);
       
@@ -216,8 +223,22 @@
         result = result && found;
       });
       return result;
-    }
+    };
     
+    
+    Interval.prototype.subset = function subset(interval) {
+      var $$ = this, result=true;
+      interval = $$.parseArgs.apply($$, arguments);
+      
+      return interval.superset(this);
+    }
+
+
+    Interval.prototype.contains = function contains(point) {
+      return this.superset(point);
+    };
+
+
     Interval.prototype.toString = function() {
       var parts = [];
       this.intervals.forEach(function(i) {
@@ -231,7 +252,8 @@
           );
       });
       return parts.join(", ");
-    }
+    };
+
 
     return Interval;
   })();

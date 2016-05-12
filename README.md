@@ -8,7 +8,9 @@ Available operations:
 - intersection (A∩B)
 - exclusion (A△B)
 - inversion (A')
-- contain (A∈B)
+- subset (A⊆B)
+- superset (A⊇B)
+- contains (A∍x)
 
 
 # Installation
@@ -89,24 +91,48 @@ new Interval(1, 8)
 // (-Infinity;1), (8,Infinity)
 ```
 
-##### `.contain(interval)` or `.contain(start, [end=start])`
-Check if interval contain other interval.
+##### `.subset(interval)` or `.subset(start, [end=start])`
+`A⊆B` - Check if interval is a subset of other interval
+
+```js
+new Interval(5, 8)
+  .subset(1, 8)
+// true
+new Interval(1, 8)
+  .subset(2, 5);
+// false
+```
+
+
+##### `.superset(interval)` or `.superset(start, [end=start])`
+`A⊇B` - Check if interval is a superset for other interval
 
 ```js
 new Interval(1, 8)
-  .contain(5, 8)
+  .superset(5, 8)
 // true
 new Interval(1, 8)
   .diference(5, 9)
-  .contain(2, 5);
+  .superset(2, 5);
 // false
 
 var i1 = new Interval(1, 4)
   .union(6, 9)
 var i2 = new Interval(1, 9)
   .diference(4, 6)
-i1.contain(i2)
+i1.superset(i2)
 // true
+```
+
+
+##### `.contains(value)`
+`A∍x` - Check if interval contains a memeber.
+
+```js
+new Interval(1, 8)
+  .contains(5)
+// true
+
 ```
 
 
