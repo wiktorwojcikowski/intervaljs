@@ -4,10 +4,10 @@ Library implementing mathematical datetime and real intervals arithmetics.
 Available operations:
 
 - union (A∪B)
-- difference
-- intersection
-- exclusion
-- inversion 
+- difference (A\B)
+- intersection (A⋂B)
+- exclusion 
+- inversion (A')
 - contain (A∈B)
 
 
@@ -41,7 +41,7 @@ new Interval(eStart, eEnd).toString() // [2, 3) - left closed, right open
 
 
 ##### `.union(intervalObj)` or `.union(start, [end=start])`
-`A∪B` - add intervals to interval.
+`A∪B` - Add intervals to interval.
 
 ```js
 new Interval(1, 3)
@@ -52,7 +52,7 @@ new Interval(1, 3)
 ```
 
 ##### `.difference(interval)` or `.difference(start, [end=start])`
-Substract interval from interval.
+`A\B` - Substract interval from interval.
 
 ```js
 new Interval(1, 8)
@@ -63,7 +63,7 @@ new Interval(1, 8)
 ```
 
 ##### `.intersection(interval)` or `.intersection(start, [end=start])`
-Common part of intervals.
+`A⋂B` - Common part of intervals.
 
 ```js
 var interval = new Interval(2, 6)
@@ -72,7 +72,7 @@ var interval = new Interval(2, 6)
 ```
 
 ##### `.exclusion(interval)` or `.exclusion(start, [end=start])`
-Exclusive OR or intervals.
+`A△B` - Exclusive OR or intervals.
 
 ```js
 var interval = new Interval(2, 6)
@@ -81,7 +81,7 @@ var interval = new Interval(2, 6)
 ```
 
 ##### `.inversion()`
-Invert interval.
+`A'` - Invert interval.
 
 ```js
 new Interval(1, 8)
