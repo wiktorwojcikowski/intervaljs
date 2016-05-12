@@ -5,8 +5,8 @@ Available operations:
 
 - union (A∪B)
 - difference (A\B)
-- intersection (A⋂B)
-- exclusion 
+- intersection (A∩B)
+- exclusion (A∆B)
 - inversion (A')
 - contain (A∈B)
 
@@ -63,7 +63,7 @@ new Interval(1, 8)
 ```
 
 ##### `.intersection(interval)` or `.intersection(start, [end=start])`
-`A⋂B` - Common part of intervals.
+`A∩B` - Common part of intervals.
 
 ```js
 var interval = new Interval(2, 6)
@@ -72,7 +72,7 @@ var interval = new Interval(2, 6)
 ```
 
 ##### `.exclusion(interval)` or `.exclusion(start, [end=start])`
-`A△B` - Exclusive OR or intervals.
+`A∆B` - Exclusive OR or intervals.
 
 ```js
 var interval = new Interval(2, 6)
