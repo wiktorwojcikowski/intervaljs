@@ -18,7 +18,7 @@
       
       this.value = function() { return value };
       this.compareValue = function() { 
-        if(this.isDatetime())
+        if(!this.isInfinite() && this.isDatetime())
           return value.getTime();
         else
           return value;
