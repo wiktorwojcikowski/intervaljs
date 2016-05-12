@@ -14,10 +14,10 @@ Available operations:
 # Installation
 
 Install with npm:
-`npm install intervaljs`
+```npm install intervaljs```
 
 Install with bower:
-`bower install intervaljs`
+```bower install intervaljs```
 
 
 # Usage
@@ -107,6 +107,18 @@ var i2 = new Interval(1, 9)
   .diference(4, 6)
 i1.contain(i2)
 // true
+```
+
+
+##### `.toString()`
+Output intervals string
+
+```js
+new Interval(1, 6)
+  .diference(3, 4)
+  .union(8)
+  .toString()
+// [1;3), (4,6], {8}
 ```
 
 
