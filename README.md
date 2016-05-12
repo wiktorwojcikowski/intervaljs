@@ -22,7 +22,7 @@ Install with bower:
 
 # Usage
 
-##### `new Interval(start, [end])`
+##### `new Interval(start, [end=start])`
 Create Interval object.
 ```js
 new Interval().toString(); // ''
@@ -30,7 +30,17 @@ new Interval(2).toString(); // '{2}'
 new Interval(1, 3).toString(); // [1;3]
 ```
 
-##### `.union(intervalObj)` or `.union(start, [end])`
+##### `new Interval.Endpoint(value, [open=false])`
+Create complex interval Endpoint.
+```js
+var eStart = new Interval.Endpoint(2, false); // 'endpoint closed'
+var eEnd = new Interval.Endpoint(3, true); // 'endpoint open'
+
+new Interval(eStart, eEnd).toString() // [2, 3)
+```
+
+
+##### `.union(intervalObj)` or `.union(start, [end=start])`
 Add intervals to interval.
 
 ```js
@@ -41,7 +51,7 @@ new Interval(1, 3)
 // [1;3], [5;Infinity]
 ```
 
-##### `.difference(interval)` or `.difference(start, [end])`
+##### `.difference(interval)` or `.difference(start, [end=start])`
 Substract interval from interval.
 
 ```js
@@ -52,7 +62,7 @@ new Interval(1, 8)
 // [1;3), (3,5)
 ```
 
-##### `.intersection(interval)` or `.intersection(start, [end])`
+##### `.intersection(interval)` or `.intersection(start, [end=start])`
 Common part of intervals.
 
 ```js
@@ -61,7 +71,7 @@ var interval = new Interval(2, 6)
 // [4;6]
 ```
 
-##### `.exclusion(interval)` or `.exclusion(start, [end])`
+##### `.exclusion(interval)` or `.exclusion(start, [end=start])`
 Exclusive OR or intervals.
 
 ```js
@@ -79,7 +89,7 @@ new Interval(1, 8)
 // (-Infinity;1), (8,Infinity)
 ```
 
-##### `.contain(interval)` or `.contain(start, [end])`
+##### `.contain(interval)` or `.contain(start, [end=start])`
 Check if interval contain other interval.
 
 ```js

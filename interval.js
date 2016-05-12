@@ -67,13 +67,16 @@
         if(arguments.length==1)
           end = start;
         if(!(start instanceof Endpoint))
-          start = $$.createEndpoint(start);
+          start = new Interval.Endpoint(start);
         if(!(end instanceof Endpoint))
-          end = $$.createEndpoint(end);
+          end = new Interval.Endpoint(end);
           
-        $$.intervals.push({start: start, end: end});
+        if(end.__gt__(start) || (end.__eq__(start) && start.isClosed()))
+          $$.intervals.push({start: start, end: end});
       }
     };
+    
+    Interval.Endpoint = Endpoint;
 
     Interval.prototype.parseArgs = function parseArgs() {
       if(!arguments.length)
@@ -86,10 +89,6 @@
         return new Interval(arguments[0], arguments[0]);
     };
 
-    Interval.prototype.createEndpoint = function(value, open) {
-      return new Endpoint(value, open);
-    }
-    
 
     Interval.prototype.union = function union(interval) {
       var $$ = this, Interval;
@@ -151,21 +150,21 @@
           else if(interval.start.__lte__($$.intervals[i].start) && 
                               interval.end.__gte__($$.intervals[i].start)) {
             $$.intervals[i].start = 
-                $$.createEndpoint(interval.end.value(), !interval.end.isOpen());
+                new Interval.Endpoint(interval.end.value(), !interval.end.isOpen());
           }
           else if(interval.start.__lte__($$.intervals[i].end) && 
                               interval.end.__gte__($$.intervals[i].end)) {
             $$.intervals[i].end = 
-                $$.createEndpoint(interval.start.value(), !interval.start.isOpen());
+                new Interval.Endpoint(interval.start.value(), !interval.start.isOpen());
           }
           else if(interval.start.__gt__($$.intervals[i].start) && 
                               interval.end.__lt__($$.intervals[i].end)) {
             var p = {
-              start: $$.createEndpoint(interval.end.value(), !interval.end.isOpen()), 
+              start: new Interval.Endpoint(interval.end.value(), !interval.end.isOpen()), 
               end: $$.intervals[i].end
             };
             $$.intervals[i].end = 
-                $$.createEndpoint(interval.start.value(), !interval.start.isOpen());;
+                new Interval.Endpoint(interval.start.value(), !interval.start.isOpen());;
             i++;
             $$.intervals.splice(i, 0, p);
           }
@@ -219,8 +218,6 @@
       return result;
     }
     
-
-
     Interval.prototype.toString = function() {
       var parts = [];
       this.intervals.forEach(function(i) {

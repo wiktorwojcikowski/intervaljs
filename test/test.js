@@ -20,7 +20,7 @@ describe("Interval", function() {
     });
   })
   
-  describe("init single poinnt", function() {
+  describe("init single point", function() {
     var interval = new Interval(2,2);
     
     it("Should has one point", function() {
@@ -28,6 +28,32 @@ describe("Interval", function() {
     });
   })
   
+  describe("init with endpoints", function() {
+    var interval = new Interval(
+          new Interval.Endpoint(2, false), new Interval.Endpoint(4, true));
+    
+    it("Should has one point", function() {
+      expect(interval.toString()).to.be.equal('[2;4)');
+    });
+  })
+
+  describe("init with end less then start", function() {
+    var interval = new Interval(3, 2);
+    
+    it("Should be empty", function() {
+      expect(interval.toString()).to.be.equal('');
+    });
+  })
+
+  describe("init with end less then start", function() {
+    var interval = new Interval(
+          new Interval.Endpoint(2, true), new Interval.Endpoint(2, false));
+    
+    it("Should be empty", function() {
+      expect(interval.toString()).to.be.equal('');
+    });
+  })
+
     
   describe("union with empty", function() {
     var interval = new Interval()
@@ -279,6 +305,7 @@ describe("Interval", function() {
       expect(interval.toString()).to.be.equal('[2;4), (6;8]');
     });
   });
+
 
 
 
