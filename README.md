@@ -3,12 +3,12 @@
 Library implementing mathematical datetime and real intervals arithmetics.
 Available operations:
 
-- union
+- union (A∪B)
 - difference
-- intersection (TODO)
-- exclusion (TODO)
-- inversion (TODO)
-- contain
+- intersection
+- exclusion
+- inversion 
+- contain (A∈B)
 
 
 # Installation
@@ -36,19 +36,19 @@ Create complex interval Endpoint.
 var eStart = new Interval.Endpoint(2, false); // 'endpoint closed'
 var eEnd = new Interval.Endpoint(3, true); // 'endpoint open'
 
-new Interval(eStart, eEnd).toString() // [2, 3)
+new Interval(eStart, eEnd).toString() // [2, 3) - left closed, right open
 ```
 
 
 ##### `.union(intervalObj)` or `.union(start, [end=start])`
-Add intervals to interval.
+`A∪B` - add intervals to interval.
 
 ```js
 new Interval(1, 3)
   .union(5, 7)
   .union(new Interval(6, Infinity))
   .toString();
-// [1;3], [5;Infinity]
+// [1;3], [5;Infinity)
 ```
 
 ##### `.difference(interval)` or `.difference(start, [end=start])`
