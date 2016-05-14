@@ -161,7 +161,7 @@
             break;
             
           if(start.__lte__($$start) && end.__gte__($$end)) {
-            $$._intervals.slice(i, 1);
+            $$._intervals.splice(i, 1);
             i--;
           }
           else if(start.__lte__($$start) && end.__gte__($$start)) {
