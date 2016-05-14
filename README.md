@@ -184,9 +184,9 @@ Iterate throught interval points with assigned step (default 1)
 
 ```js
 new Interval(1, 6)
-  .union(8)
-  .forEach(function(start, end) {
-    // start.value()
+  .diference(4, 8)
+  .forEach(function(point) {
+    // point = 1, then 2, then 3
   })
 ```
 

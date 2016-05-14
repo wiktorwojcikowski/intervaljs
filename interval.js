@@ -285,7 +285,8 @@
     
     Interval.prototype.forEachPoint = function(cb, step) {
       var i;
-      step = step || 1;
+      if(step<=0) 
+        step=1;
       this.forEach(function(s, e) {
         for(i=s; i<=e; i=i+step)
           cb(i);

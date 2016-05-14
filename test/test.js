@@ -363,5 +363,17 @@ describe("Interval", function() {
     });
   });
 
+  describe("diference separate intervals", function() {
+  
+    var interval = new Interval(2, 4)
+      .difference(6, 8);
+    
+    it("should has one inetrval", function() {
+      expect(interval.toString()).to.be.equal('[2;4]');
+    });
+  });
+
+  
+
 
 });
