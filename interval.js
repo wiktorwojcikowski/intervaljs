@@ -153,7 +153,7 @@
         var start = interval.start, 
             end = interval.end;
       
-        for(var i=0; i<$$._intervals.length; i++) {
+        for(var i=0; $$._intervals.length && i<$$._intervals.length; i++) {
           var $$start = $$._intervals[i].start;
           var $$end = $$._intervals[i].end;
 
