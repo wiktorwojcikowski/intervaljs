@@ -12,6 +12,13 @@ Available operations:
 - superset (A⊇B)
 - contains (A∍x)
 
+Utils functions:
+
+- toString()
+- count()
+- forEach()
+- forEachPoint()
+- intervals()
 
 # Installation
 
@@ -151,8 +158,29 @@ arr.length;
 // 2
 ```
 
-##### `.forEach(callback)`
-Iterate throught intervals
+##### `.forEach(callback(start, end), [step=0])`
+Iterate throught interval parts borders, with minimal step for open endpoints.
+For step equal 0, function return border values skipping open/close atributes.
+
+```js
+new Interval(1, 6)
+  .difference(4, 8) // we have [1;4)
+  .forEach(function(start, end) {
+    // start is 1
+    // end = 4
+  }, 0) // step = 0
+
+// same case with step value
+new Interval(1, 6)
+  .difference(4, 8) // we have [1;4)
+  .forEach(function(start, end) {
+    // start is 1
+    // end = 3.5
+  }, 0.5) // step = 0.5
+```
+
+##### `.forEachPoint(callback(point), [step=1])`
+Iterate throught interval points with assigned step (default 1)
 
 ```js
 new Interval(1, 6)

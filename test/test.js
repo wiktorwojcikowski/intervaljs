@@ -333,7 +333,35 @@ describe("Interval", function() {
     });
   });
 
+  describe("forEach", function() {
+  
+    var interval = new Interval(2, 6)
+      .exclusion(4, 8);
+    
+    var borders = new Interval();
+    interval.forEach(function(start, end) {
+      borders.union(start, end);
+    }, 1);
+      
+    it("should has one inetrval", function() {
+      expect(borders.toString()).to.be.equal('[2;3], [7;8]');
+    });
+  });
 
+  describe("forEachPoint", function() {
+  
+    var interval = new Interval(2, 6)
+      .exclusion(4, 8);
+    
+    var points = new Interval();
+    interval.forEachPoint(function(point) {
+      points.union(point);
+    }, 1);
+      
+    it("should has one inetrval", function() {
+      expect(points.toString()).to.be.equal('{2}, {3}, {7}, {8}');
+    });
+  });
 
 
 });
