@@ -144,6 +144,16 @@ describe("Interval", function() {
     });
   });
 
+  describe("union close", function() {
+    var interval = new Interval(2, 9)
+      .difference(2, 4)
+      .difference(5, 6)
+      .union(2, 6);
+
+    it("Should has one interval", function() {
+      expect(interval.toString()).to.be.equal('[2;9]');
+    });
+  });
   
 
   describe("difference from right", function() {

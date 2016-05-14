@@ -37,20 +37,22 @@
           ( this.compareValue() == endpoint.compareValue() && 
                                     this.isOpen() && endpoint.isClosed() );
     };
-    Endpoint.prototype.__lte__ = function(endpoint) {
+    Endpoint.prototype.__lte__ = function(endpoint, orClose) {
       return this.__lt__(endpoint) ||
         ( this.compareValue() == endpoint.compareValue() && 
-                                this.isOpen() == endpoint.isOpen() );
+            (this.isOpen() == endpoint.isOpen() || 
+            (orClose && (this.isClosed() || endpoint.isClosed())) ));
     };
     Endpoint.prototype.__gt__ = function(endpoint) { 
       return this.compareValue() > endpoint.compareValue() ||
           ( this.compareValue() == endpoint.compareValue() && 
                                     this.isOpen() && endpoint.isClosed() );
     };
-    Endpoint.prototype.__gte__ = function(endpoint) { 
+    Endpoint.prototype.__gte__ = function(endpoint, orClose) { 
       return this.__gt__(endpoint) ||
-          ( this.compareValue() == endpoint.compareValue() && 
-                                  this.isOpen() == endpoint.isOpen() );
+        ( this.compareValue() == endpoint.compareValue() && 
+            (this.isOpen() == endpoint.isOpen() || 
+            (orClose && (this.isClosed() || endpoint.isClosed())) ));
     };
     
     Endpoint.prototype.value = function value() {
@@ -109,7 +111,12 @@
       interval.forEach(function(start, end) {
         var merged = false, i=0;
         
-        if(!$$._intervals.length || $$._intervals[$$.count()-1].end.__lt__(start) ) {
+        if(!$$._intervals.length) {
+          $$._intervals.push({start: start, end: end});
+          return;
+        }
+        var $$last = $$._intervals[$$.count()-1];
+        if(!start.__lte__($$last.end, true)) {
           $$._intervals.push({start: start, end: end});
           return;
         }
@@ -117,21 +124,21 @@
         for(; i<$$._intervals.length; i++) {
           var $$start = $$._intervals[i].start;
           var $$end = $$._intervals[i].end;
-          if(!(end.__gte__($$start) || start.__lte__($$end)))
+          if(!(end.__gte__($$start, true) || start.__lte__($$end, true)))
             break;
-          if(end.__gte__($$start) && start.__lte__($$end) ) {
+          if(end.__gte__($$start, true) && start.__lte__($$end, true) ) {
             merged = true;
-            if( start.__lte__($$start))
+            if( start.__lte__($$start, true))
               $$._intervals[i].start = start;
-            if( end.__gte__($$end))
+            if( end.__gte__($$end, true))
               $$._intervals[i].end = end;
             break;
           }
         }
-        if(i<$$._intervals.length && (end.__gte__($$._intervals[i].start) && 
-                                     start.__lte__($$._intervals[i].end))) {
+        if(i<$$._intervals.length && (end.__gte__($$._intervals[i].start, true) && 
+                                     start.__lte__($$._intervals[i].end, true))) {
           for(i++; i<$$._intervals.length;) {
-            if(!(end.__gte__($$._intervals[i].start) && start.__lte__($$._intervals[i].end))) 
+            if(!(end.__gte__($$._intervals[i].start, true) && start.__lte__($$._intervals[i].end, true))) 
               break;
             if(end.__lt__($$._intervals[i].end) ) {
               $$._intervals[i-1].end = $$._intervals[i].end;

@@ -1,6 +1,6 @@
 {
   "name": "intervaljs",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Library to operate on real intervals",
   "main": "interval.js",
   "directories": {
