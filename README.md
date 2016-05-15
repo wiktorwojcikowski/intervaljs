@@ -1,6 +1,6 @@
 # interval.js
 
-Library implementing mathematical datetime and real [intervals arithmetics](https://en.wikipedia.org/wiki/Interval_(mathematics)).
+Library implementing mathematical real numbers [intervals arithmetics](https://en.wikipedia.org/wiki/Interval_(mathematics)).
 Available operations:
 
 - union (A∪B)

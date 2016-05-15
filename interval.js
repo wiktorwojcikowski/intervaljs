@@ -18,14 +18,10 @@
       
       this.value = function() { return value };
       this.compareValue = function() { 
-        if(!this.isInfinite() && this.isDatetime())
-          return value.getTime();
-        else
           return value;
       };
       this.isClosed = function() { return !this.isInfinite() && open==false };
       this.isOpen = function() { return this.isInfinite() || open==true };
-      this.isDatetime = function() { return value instanceof Date };
       this.isInfinite = function() { return Math.abs(value) == Infinity };
     }
     Endpoint.prototype.__eq__ = function(endpoint) { 
