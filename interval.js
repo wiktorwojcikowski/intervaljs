@@ -275,7 +275,8 @@
           end = end - (end % step);
         else if(i.end.isOpen())
           end = end - step;
-        cb(start, end, k);
+        if(start < end)
+          cb(start, end, k);
       });
     };
     
