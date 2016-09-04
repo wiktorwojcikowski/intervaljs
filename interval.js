@@ -12,17 +12,21 @@
        return dst;
     };
     
-    var Endpoint = function(value, open) {
+    var Endpoint = function(value, open, position) {
       if(typeof open == 'undefined')
         open = false;
-      
-      this.value = function() { return value };
-      this.compareValue = function() { 
-          return value;
-      };
-      this.isClosed = function() { return !this.isInfinite() && open==false };
-      this.isOpen = function() { return this.isInfinite() || open==true };
-      this.isInfinite = function() { return Math.abs(value) == Infinity };
+      if(typeof position == 'undefined')
+        position = 'start';
+
+      this.value = function() { return value; };
+      this.position = function() { return position; };
+      this.setPosition = function(p) { position=p; };
+      this.compareValue = function() { return value; };
+      this.isClosed = function() { return !this.isInfinite() && open==false; };
+      this.isOpen = function() { return this.isInfinite() || open==true; };
+      this.isInfinite = function() { return Math.abs(value) == Infinity; };
+      this.isLeft = function() { return position == 'start'; };
+      this.isRight = function() { return position == 'end'; };
     }
     Endpoint.prototype.__eq__ = function(endpoint) { 
       return this.compareValue() == endpoint.compareValue() && 
@@ -30,25 +34,32 @@
     };
     Endpoint.prototype.__lt__ = function(endpoint) { 
       return this.compareValue() < endpoint.compareValue() ||
-          ( this.compareValue() == endpoint.compareValue() && 
-                                    this.isOpen() && endpoint.isClosed() );
+          ( this.compareValue() == endpoint.compareValue() && (
+            (this.isLeft() && endpoint.isRight() && this.isClosed() && endpoint.isClosed()) || 
+            (this.isRight() && endpoint.isLeft() && this.isOpen() && endpoint.isOpen()) || 
+            (this.isLeft() && endpoint.isLeft() && this.isClosed() && endpoint.isOpen()) || 
+            (this.isRight() && endpoint.isRight() && this.isOpen() && endpoint.isClosed()) ));
     };
     Endpoint.prototype.__lte__ = function(endpoint, orClose) {
+
       return this.__lt__(endpoint) ||
         ( this.compareValue() == endpoint.compareValue() && 
             (this.isOpen() == endpoint.isOpen() || 
-            (orClose && (this.isClosed() || endpoint.isClosed())) ));
+            (orClose == true && (this.isClosed() || endpoint.isClosed())) ));
     };
     Endpoint.prototype.__gt__ = function(endpoint) { 
       return this.compareValue() > endpoint.compareValue() ||
-          ( this.compareValue() == endpoint.compareValue() && 
-                                    this.isOpen() && endpoint.isClosed() );
+          ( this.compareValue() == endpoint.compareValue() && (
+            (this.isLeft() && endpoint.isRight() && this.isOpen() && endpoint.isOpen()) || 
+            (this.isRight() && endpoint.isLeft() && this.isClosed() && endpoint.isClosed()) || 
+            (this.isLeft() && endpoint.isLeft() && this.isOpen() && endpoint.isClosed()) || 
+            (this.isRight() && endpoint.isRight() && this.isClosed() && endpoint.isOpen()) ));
     };
     Endpoint.prototype.__gte__ = function(endpoint, orClose) { 
       return this.__gt__(endpoint) ||
         ( this.compareValue() == endpoint.compareValue() && 
             (this.isOpen() == endpoint.isOpen() || 
-            (orClose && (this.isClosed() || endpoint.isClosed())) ));
+            (orClose == true && (this.isClosed() || endpoint.isClosed())) ));
     };
     
     Endpoint.prototype.value = function value() {
@@ -68,7 +79,10 @@
         if(!(end instanceof Endpoint))
           end = new Interval.Endpoint(end);
           
-        if(end.__gt__(start) || (end.__eq__(start) && start.isClosed()))
+        start.setPosition('start');
+        end.setPosition('end');
+
+        if(end.__gte__(start))
           this._intervals.push({start: start, end: end});
       }
     };
@@ -161,17 +175,17 @@
             i--;
           }
           else if(start.__lte__($$start) && end.__gte__($$start)) {
-            $$._intervals[i].start = new Interval.Endpoint(end.value(), !end.isOpen());
+            $$._intervals[i].start = new Interval.Endpoint(end.value(), !end.isOpen(), 'start');
           }
           else if(start.__lte__($$end) && end.__gte__($$end)) {
-            $$._intervals[i].end = new Interval.Endpoint(start.value(), !start.isOpen());
+            $$._intervals[i].end = new Interval.Endpoint(start.value(), !start.isOpen(), 'end');
           }
           else if(start.__gt__($$start) && end.__lt__($$end)) {
             var p = {
-              start: new Interval.Endpoint(end.value(), !end.isOpen()), 
+              start: new Interval.Endpoint(end.value(), !end.isOpen(), 'start'), 
               end: $$end
             };
-            $$._intervals[i].end = new Interval.Endpoint(start.value(), !start.isOpen());
+            $$._intervals[i].end = new Interval.Endpoint(start.value(), !start.isOpen(), 'end');
             i++;
             $$._intervals.splice(i, 0, p);
           }

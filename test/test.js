@@ -4,7 +4,7 @@ var expect = chai.expect;
 
 describe("Interval", function() {
 
-  describe("init empty", function() {
+   describe("init empty", function() {
     var interval = new Interval();
     
     it("Should has empty intervals", function() {
@@ -221,6 +221,17 @@ describe("Interval", function() {
     });
   });
 
+  describe("double difference with single point", function() {
+    var big = new Interval(4,6)
+      .difference(4);
+    var interval = new Interval(4,6)
+      .difference(big);
+      
+    it("Should has two intervals", function() {
+      expect(interval.toString()).to.be.equal('{4}');
+    });
+  });
+
   describe("superset single point", function() {
     var result = new Interval(2,3)
       .superset(3);
@@ -373,7 +384,6 @@ describe("Interval", function() {
     });
   });
 
-  
 
 
 });
