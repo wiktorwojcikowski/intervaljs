@@ -359,6 +359,21 @@ describe("Interval", function() {
     });
   });
 
+  describe("forEach", function() {
+  
+    var interval = new Interval(2, 6)
+      .union(8);
+    
+    var borders = new Interval();
+    interval.forEach(function(start, end) {
+      borders.union(start, end);
+    }, 1);
+      
+    it("should has two inetrvals", function() {
+      expect(borders.toString()).to.be.equal('[2;6], {8}');
+    });
+  });
+
   describe("forEachPoint", function() {
   
     var interval = new Interval(2, 6)
